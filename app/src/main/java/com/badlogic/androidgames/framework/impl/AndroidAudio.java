@@ -15,11 +15,12 @@ import com.badlogic.androidgames.framework.Sound;
 public class AndroidAudio implements Audio {
     AssetManager assets;
     SoundPool soundPool;
+    private static final int SIMULTANEOUS_CHANNELS = 6;
 
     public AndroidAudio(Activity activity) {
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.assets = activity.getAssets();
-        this.soundPool = new SoundPool(20, AudioManager.STREAM_MUSIC, 0);
+        this.soundPool = new SoundPool(SIMULTANEOUS_CHANNELS, AudioManager.STREAM_MUSIC, 0);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class GameWorld {
     private static final float PARTICLE_RADIUS = 0.3f;
 
     // Parameters for world simulation
-    private static final float TIME_STEP = 1 / 60f; // 60 fps
+    private static final float TIME_STEP = 1 / 50f; // 60 fps
     private static final int VELOCITY_ITERATIONS = 8;
     private static final int POSITION_ITERATIONS = 3;
     private static final int PARTICLE_ITERATIONS = 3;
@@ -138,15 +138,20 @@ public class GameWorld {
     {
         // advance the physics simulation
         world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS, PARTICLE_ITERATIONS);
+        // handle touch events
+        for (Input.TouchEvent event: touchHandler.getTouchEvents())
+            touchConsumer.consumeTouchEvent(event);
+    }
+
+    public synchronized void render()
+    {
         // clear the screen (with black)
         canvas.drawARGB(255, 0, 0, 0);
         for (GameObject obj: objects)
             obj.draw(buffer);
         drawParticles();
-        // handle touch events
-        for (Input.TouchEvent event: touchHandler.getTouchEvents())
-            touchConsumer.consumeTouchEvent(event);
     }
+
 
     public float toPixelsX(float x)
     {

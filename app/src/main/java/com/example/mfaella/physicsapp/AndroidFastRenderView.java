@@ -46,15 +46,19 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
             startTime = currentTime;
 
             gameworld.update();
+            gameworld.render();
 
             Canvas canvas = holder.lockCanvas();
+
             canvas.getClipBounds(dstRect);
             // scaling to actual screen resolution
-            canvas.drawBitmap(framebuffer, null, dstRect, null);                           
+            canvas.drawBitmap(framebuffer, null, dstRect, null);
+
             holder.unlockCanvasAndPost(canvas);
+
             // measure FPS
             frameCounter++;
-            if (fpsDeltaTime > 1) {
+            if (fpsDeltaTime > 1) { // every second
                 Log.d("FastRenderView", "Current FPS = " + frameCounter);
                 frameCounter = 0;
                 fpsTime = currentTime;

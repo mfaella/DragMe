@@ -8,10 +8,12 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.badlogic.androidgames.framework.Audio;
+import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.impl.AndroidAudio;
 import com.badlogic.androidgames.framework.impl.MultiTouchHandler;
 
@@ -23,6 +25,7 @@ public class MainActivity extends Activity {
     private MyThread t; // just for fun, unrelated to the rest
     private AndroidFastRenderView renderView;
     private Audio audio;
+    private Music backgroundMusic;
     private MultiTouchHandler touch;
 
     // boundaries of the physical simulation
@@ -47,6 +50,8 @@ public class MainActivity extends Activity {
         // Sound
         audio = new AndroidAudio(this);
         CollisionSounds.init(audio);
+        backgroundMusic = audio.newMusic("soundtrack.mp3");
+        backgroundMusic.play();
 
         // Game world
         DisplayMetrics metrics = new DisplayMetrics();
@@ -64,6 +69,10 @@ public class MainActivity extends Activity {
         GameObject b = gw.addGameObject(new DynamicBoxGO(gw, 1, -3));
         new MyRevoluteJoint(gw, a.body, b.body);
         //new MyPrismaticJoint(gw, a.body, b.body);
+
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        float refreshRate = display.getRefreshRate();
+        Log.i(getString(R.string.app_name), "Refresh rate =" + refreshRate);
 
         // Accelerometer
         SensorManager smanager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -97,6 +106,7 @@ public class MainActivity extends Activity {
         super.onPause();
         Log.i("Main thread", "pause");
         renderView.pause();
+        backgroundMusic.pause();
 
         // persistence example
         SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
@@ -118,6 +128,7 @@ public class MainActivity extends Activity {
         Log.i("Main thread", "resume");
 
         renderView.resume();
+        backgroundMusic.play();
 
         // persistence example
         SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
