@@ -29,7 +29,6 @@ public class GameWorld {
     Bitmap buffer;
     private Canvas canvas;
     private Paint particlePaint;
-    private final boolean isLittleEndian;
 
     // Simulation
     List<GameObject> objects;
@@ -38,13 +37,9 @@ public class GameWorld {
     private ContactListener contactListener; // kept to prevent GC
     private TouchConsumer touchConsumer;
     private TouchHandler touchHandler;
-    private final int bufferOffset; // an architecture-dependent parameter
 
     // Particles
     ParticleSystem particleSystem;
-    private byte[] particlePositions;
-    private ByteBuffer particlePositionsBuffer;
-    private static final int BYTESPERPARTICLE = 8;
     private static final int MAXPARTICLECOUNT = 1000;
     private static final float PARTICLE_RADIUS = 0.3f;
 
@@ -68,12 +63,6 @@ public class GameWorld {
         particleSystem.setRadius(PARTICLE_RADIUS);
         particleSystem.setMaxParticleCount(MAXPARTICLECOUNT);
         psysdef.delete();
-        particlePositionsBuffer = ByteBuffer.allocateDirect(MAXPARTICLECOUNT * BYTESPERPARTICLE);
-        particlePositions = particlePositionsBuffer.array();
-
-        particlePaint = new Paint();
-        particlePaint.setARGB(255, 0, 255, 0);
-        particlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         // stored to prevent GC
         contactListener = new MyContactListener();
@@ -84,17 +73,6 @@ public class GameWorld {
 
         this.objects = new ArrayList<>();
         this.canvas = new Canvas(buffer);
-
-        isLittleEndian = (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN);
-        // An ugly trick, can we do better?
-        Log.d("DEBUG", "Build.FINGERPRINT=" + Build.FINGERPRINT);
-        Log.d("DEBUG", "Build.PRODUCT=" + Build.PRODUCT);
-        if (Build.FINGERPRINT.contains("generic") ||
-            Build.FINGERPRINT.contains("unknown") ||
-            Build.PRODUCT.contains("sdk"))
-            bufferOffset = 0; // emulator
-        else
-            bufferOffset = 4; // real device
     }
 
     public synchronized GameObject addGameObject(GameObject obj)
@@ -105,33 +83,6 @@ public class GameWorld {
     public synchronized void addParticleGroup(GameObject obj)
     {
         objects.add(obj);
-    }
-
-    private void drawParticles()
-    {
-        final int particleCount = particleSystem.getParticleCount();
-
-        // Log.d("GameWorld", "about to draw " + particleCount + " particles");
-
-        particleSystem.copyPositionBuffer(0, particleCount, particlePositionsBuffer);
-
-        for (int i = 0; i < particleCount; i++) {
-            int xint, yint;
-            if (isLittleEndian) {
-                xint = (particlePositions[i * 8 + bufferOffset] & 0xFF) | (particlePositions[i * 8 + bufferOffset + 1] & 0xFF) << 8 |
-                       (particlePositions[i * 8 + bufferOffset + 2] & 0xFF) << 16 | (particlePositions[i * 8 + bufferOffset + 3] & 0xFF) << 24;
-                yint = (particlePositions[i * 8 + bufferOffset + 4] & 0xFF) | (particlePositions[i * 8 + bufferOffset + 5] & 0xFF) << 8 |
-                       (particlePositions[i * 8 + bufferOffset + 6] & 0xFF) << 16 | (particlePositions[i * 8 + bufferOffset + 7] & 0xFF) << 24;
-            } else {
-                xint = (particlePositions[i * 8] & 0xFF) << 24 | (particlePositions[i * 8 + 1] & 0xFF) << 16 |
-                       (particlePositions[i * 8 + 2] & 0xFF) << 8 | (particlePositions[i * 8 + 3] & 0xFF);
-                yint = (particlePositions[i * 8 + 4] & 0xFF) << 24 | (particlePositions[i * 8 + 5] & 0xFF) << 16 |
-                       (particlePositions[i * 8 + 6] & 0xFF) << 8 | (particlePositions[i * 8 + 7] & 0xFF);
-            }
-
-            float x = Float.intBitsToFloat(xint), y = Float.intBitsToFloat(yint);
-            canvas.drawCircle(toPixelsX(x), toPixelsY(y), 6, particlePaint);
-        }
     }
 
     public synchronized void update()
@@ -149,25 +100,16 @@ public class GameWorld {
         canvas.drawARGB(255, 0, 0, 0);
         for (GameObject obj: objects)
             obj.draw(buffer);
-        drawParticles();
+        // drawParticles();
     }
 
-
-    public float toPixelsX(float x)
-    {
-        return (x-physicalSize.xmin)/physicalSize.width*bufferWidth;
-    }
-
-    public float toPixelsY(float y)
-    {
-        return (y-physicalSize.ymin)/physicalSize.height*bufferHeight;
-    }
+    public float toPixelsX(float x) { return (x-physicalSize.xmin)/physicalSize.width*bufferWidth; }
+    public float toPixelsY(float y) { return (y-physicalSize.ymin)/physicalSize.height*bufferHeight; }
 
     public float toPixelsXLength(float x)
     {
         return x/physicalSize.width*bufferWidth;
     }
-
     public float toPixelsYLength(float y)
     {
         return y/physicalSize.height*bufferHeight;

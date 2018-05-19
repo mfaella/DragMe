@@ -12,6 +12,7 @@ import com.google.fpl.liquidfun.Fixture;
  * Created by mfaella on 01/03/16.
  */
 public class MyContactListener extends ContactListener {
+    @Override
     public void beginContact(Contact contact) {
         //Log.d("MyContactListener", "Begin contact");
         Fixture fa = contact.getFixtureA(),
