@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.util.Log;
 
 import com.badlogic.androidgames.framework.Music;
 
@@ -15,14 +16,14 @@ public class AndroidMusic implements Music, OnCompletionListener {
     public AndroidMusic(AssetFileDescriptor assetDescriptor) {
         mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(assetDescriptor.getFileDescriptor());
-                    //assetDescriptor.getStartOffset(),
-                    //assetDescriptor.getLength());
+            mediaPlayer.setDataSource(assetDescriptor.getFileDescriptor(),
+                    assetDescriptor.getStartOffset(),
+                    assetDescriptor.getLength());
             mediaPlayer.prepare();
             isPrepared = true;
             mediaPlayer.setOnCompletionListener(this);
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't load music");
+            throw new RuntimeException("Couldn't load music", e);
         }
     }
 
