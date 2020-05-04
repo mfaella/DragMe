@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
@@ -15,12 +16,17 @@ import com.badlogic.androidgames.framework.Sound;
 public class AndroidAudio implements Audio {
     AssetManager assets;
     SoundPool soundPool;
-    private static final int SIMULTANEOUS_CHANNELS = 6;
+    private static final int SIMULTANEOUS_CHANNELS = 4;
 
     public AndroidAudio(Activity activity) {
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.assets = activity.getAssets();
-        this.soundPool = new SoundPool(SIMULTANEOUS_CHANNELS, AudioManager.STREAM_MUSIC, 0);
+        this.soundPool = new SoundPool.Builder().setMaxStreams(SIMULTANEOUS_CHANNELS)
+                                                .setAudioAttributes(
+                                                        new AudioAttributes.Builder()
+                                                                           .setUsage(AudioAttributes.USAGE_GAME)
+                                                                           .build())
+                                                .build();
     }
 
     @Override

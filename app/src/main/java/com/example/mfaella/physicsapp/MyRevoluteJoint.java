@@ -30,8 +30,8 @@ public class MyRevoluteJoint
         jointDef.setLocalAnchorB(-1f, -1f);
         // add friction
         jointDef.setEnableMotor(true);
-        jointDef.setMotorSpeed(0);
-        jointDef.setMaxMotorTorque(8f);
+        jointDef.setMotorSpeed(1.5f);
+        jointDef.setMaxMotorTorque(80f);
         joint = gw.world.createJoint(jointDef);
 
         jointDef.delete();

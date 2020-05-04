@@ -23,7 +23,7 @@ public class MyPrismaticJoint
         jointDef.setLocalAxisA(1f,1f);
         // add friction
         jointDef.setEnableMotor(true);
-        jointDef.setMotorSpeed(-2f);
+        jointDef.setMotorSpeed(2f);
         jointDef.setMaxMotorForce(10f);
         joint = gw.world.createJoint(jointDef);
 

@@ -9,7 +9,9 @@ import com.google.fpl.liquidfun.MouseJoint;
 import com.google.fpl.liquidfun.MouseJointDef;
 import com.google.fpl.liquidfun.QueryCallback;
 
-
+/**
+ * Takes care of user interaction: pulls objects using a Mouse Joint.
+ */
 public class TouchConsumer {
 
     private final float offsetX, offsetY;
@@ -61,7 +63,7 @@ public class TouchConsumer {
         }
     }
 
-    public void consumeTouchDown(Input.TouchEvent event) {
+    private void consumeTouchDown(Input.TouchEvent event) {
         int pointerId = event.pointer;
 
         // if we are already dragging with another finger, discard this event
@@ -78,20 +80,20 @@ public class TouchConsumer {
             Body touchedBody = touchedFixture.getBody();
             Object userData = touchedBody.getUserData();
             if (userData != null) {
+                // Set up a mouse joint between the touched GameObject and the touch coordinates (x,y)
                 GameObject touchedGO = (GameObject) userData;
                 Log.d("MultiTouchHandler", "touched body " + touchedGO.name);
                 mouseJointDef.setBodyA(touchedBody); // irrelevant but necessary
                 mouseJointDef.setBodyB(touchedBody);
                 mouseJointDef.setMaxForce(500 * touchedBody.getMass());
                 mouseJointDef.setTarget(x, y);
-
                 mouseJoint = gw.world.createMouseJoint(mouseJointDef);
                 activePointerID = pointerId;
             }
         }
     }
 
-    public void consumeTouchUp(Input.TouchEvent event) {
+    private void consumeTouchUp(Input.TouchEvent event) {
         if (mouseJoint != null && event.pointer == activePointerID) {
             Log.d("MultiTouchHandler", "Releasing joint");
             gw.world.destroyJoint(mouseJoint);
@@ -100,7 +102,7 @@ public class TouchConsumer {
         }
     }
 
-    public void consumeTouchMove(Input.TouchEvent event) {
+    private void consumeTouchMove(Input.TouchEvent event) {
         if (mouseJoint!=null && event.pointer == activePointerID) {
             float x = offsetX + event.x * scaleX,
                   y = offsetY + event.y * scaleY;

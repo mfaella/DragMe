@@ -19,7 +19,6 @@ import com.badlogic.androidgames.framework.impl.MultiTouchHandler;
 
 import java.nio.ByteOrder;
 
-
 public class MainActivity extends Activity {
 
     private MyThread t; // just for fun, unrelated to the rest
@@ -68,9 +67,10 @@ public class MainActivity extends Activity {
         GameObject a = gw.addGameObject(new DynamicBoxGO(gw, 0, -2));
         GameObject b = gw.addGameObject(new DynamicBoxGO(gw, 1, -3));
         new MyRevoluteJoint(gw, a.body, b.body);
-        //new MyPrismaticJoint(gw, a.body, b.body);
+        // new MyPrismaticJoint(gw, a.body, b.body);
 
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        // Just for info
         float refreshRate = display.getRefreshRate();
         Log.i(getString(R.string.app_name), "Refresh rate =" + refreshRate);
 
