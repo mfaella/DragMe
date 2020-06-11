@@ -17,17 +17,22 @@ public abstract class GameObject {
     {
         this.gw = gw;
     }
+
     public boolean draw(Bitmap buffer)
     {
         if (body!=null) {
+            // Physical position of the center
             float x = body.getPositionX(),
                   y = body.getPositionY(),
                   angle = body.getAngle();
             // Log.d("GameObject", "x=" + x + "\t y=" + y);
-            if (x > gw.physicalSize.xmin && x < gw.physicalSize.xmax &&
-                y > gw.physicalSize.ymin && y < gw.physicalSize.ymax) {
+            // Cropping
+            Box view = gw.currentView;
+            if (x > view.xmin && x < view.xmax &&
+                y > view.ymin && y < view.ymax) {
+                // Screen position
                 float screen_x = gw.toPixelsX(x),
-                        screen_y = gw.toPixelsY(y);
+                      screen_y = gw.toPixelsY(y);
                 this.draw(buffer, screen_x, screen_y, angle);
                 return true;
             } else

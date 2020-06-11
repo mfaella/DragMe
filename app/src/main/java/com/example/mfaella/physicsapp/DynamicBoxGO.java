@@ -1,9 +1,15 @@
 package com.example.mfaella.physicsapp;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.BodyType;
@@ -31,7 +37,7 @@ public class DynamicBoxGO extends GameObject
 
         instances++;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.buffer); // Is this needed?
         this.screen_semi_width = gw.toPixelsXLength(width)/2;
         this.screen_semi_height = gw.toPixelsYLength(height)/2;
 
@@ -63,13 +69,35 @@ public class DynamicBoxGO extends GameObject
         fixturedef.delete();
         bdef.delete();
         box.delete();
+
+        Fixture f = body.getFixtureList();
+
+        // Prevents scaling
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        bitmap = BitmapFactory.decodeResource(gw.activity.getResources(), R.drawable.icona, o);
+
+        // Log.i("Dragme", "size: " + bitmap.getWidth() + ", " + bitmap.getHeight());
+        // Note: top <= bottom
+        src.set(0, 0, 76, 76);
     }
+
+    private final Rect src = new Rect();
+    private final RectF dest = new RectF();
+    private Bitmap bitmap;
 
     @Override
     public void draw(Bitmap buffer, float x, float y, float angle) {
         canvas.save();
         canvas.rotate((float) Math.toDegrees(angle), x, y);
-        canvas.drawRect(x- screen_semi_width, y- screen_semi_height, x + screen_semi_width, y + screen_semi_height, paint);
+        dest.left = x - screen_semi_width;
+        dest.bottom = y + screen_semi_height;
+        dest.right = x + screen_semi_width;
+        dest.top = y - screen_semi_height;
+        // Sprite
+        canvas.drawBitmap(bitmap, src, dest, null);
+        // Simple box
+        // canvas.drawRect(x- screen_semi_width, y- screen_semi_height, x + screen_semi_width, y + screen_semi_height, paint);
         canvas.restore();
     }
 }

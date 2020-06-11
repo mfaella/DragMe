@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         Box physicalSize = new Box(XMIN, YMIN, XMAX, YMAX),
             screenSize   = new Box(0, 0, metrics.widthPixels, metrics.heightPixels);
-        GameWorld gw = new GameWorld(physicalSize, screenSize);
+        GameWorld gw = new GameWorld(physicalSize, screenSize, this);
 
         gw.addGameObject(new DynamicBoxGO(gw, 0, 0));
         gw.addGameObject(new DynamicBoxGO(gw, 5, 0));
@@ -69,8 +69,8 @@ public class MainActivity extends Activity {
         new MyRevoluteJoint(gw, a.body, b.body);
         // new MyPrismaticJoint(gw, a.body, b.body);
 
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         // Just for info
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         float refreshRate = display.getRefreshRate();
         Log.i(getString(R.string.app_name), "Refresh rate =" + refreshRate);
 
@@ -90,10 +90,10 @@ public class MainActivity extends Activity {
 
         // Touch
         touch = new MultiTouchHandler(renderView, 1, 1);
-        // setter needed due to cyclic dependency
+        // Setter needed due to cyclic dependency
         gw.setTouchHandler(touch);
 
-        // unrelated to the rest, just to show interaction with another thread
+        // Unrelated to the rest, just to show interaction with another thread
         t = new MyThread(gw);
         t.start();
 
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
     public void onPause() {
         super.onPause();
         Log.i("Main thread", "pause");
-        renderView.pause();
+        renderView.pause(); // stops the main loop
         backgroundMusic.pause();
 
         // persistence example
@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
         super.onResume();
         Log.i("Main thread", "resume");
 
-        renderView.resume();
+        renderView.resume(); // starts game loop in a separate thread
         backgroundMusic.play();
 
         // persistence example

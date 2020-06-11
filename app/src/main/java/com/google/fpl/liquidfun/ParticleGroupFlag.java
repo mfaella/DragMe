@@ -9,8 +9,8 @@
 package com.google.fpl.liquidfun;
 
 public final class ParticleGroupFlag {
-  public final static int solidParticleGroup = 1 << 0;
-  public final static int rigidParticleGroup = 1 << 1;
-  public final static int particleGroupCanBeEmpty = 1 << 2;
+  public final static int solidParticleGroup      = 1 << 0; // 1
+  public final static int rigidParticleGroup      = 1 << 1; // 2
+  public final static int particleGroupCanBeEmpty = 1 << 2; // 4
 }
 

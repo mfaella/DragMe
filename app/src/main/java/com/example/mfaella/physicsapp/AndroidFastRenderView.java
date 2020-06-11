@@ -22,12 +22,28 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
         this.holder = getHolder();
     }
 
-    public void resume() { 
+    /** Starts the game loop in a separate thread.
+     */
+    public void resume() {
         running = true;
         renderThread = new Thread(this);
         renderThread.start();         
-    }      
-    
+    }
+
+    /** Stops the game loop and waits for it to finish
+     */
+    public void pause() {
+        running = false;
+        while(true) {
+            try {
+                renderThread.join();
+                break;
+            } catch (InterruptedException e) {
+                // just retry
+            }
+        }
+    }
+
     public void run() {
         Rect dstRect = new Rect();
         long startTime = System.nanoTime(), fpsTime = startTime, frameCounter = 0;
@@ -64,16 +80,4 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
             }
         }
     }
-
-    public void pause() {                        
-        running = false;                        
-        while(true) {
-            try {
-                renderThread.join();
-                break;
-            } catch (InterruptedException e) {
-                // just retry
-            }
-        }
-    }        
 }

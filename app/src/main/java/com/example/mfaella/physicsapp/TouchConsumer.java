@@ -14,9 +14,6 @@ import com.google.fpl.liquidfun.QueryCallback;
  */
 public class TouchConsumer {
 
-    private final float offsetX, offsetY;
-    private final float scaleX, scaleY;
-
     // keep track of what we are dragging
     private MouseJoint mouseJoint;
     private int activePointerID;
@@ -39,13 +36,8 @@ public class TouchConsumer {
     /**
         scale{X,Y} are the scale factors from pixels to physics simulation coordinates
     */
-    public TouchConsumer(GameWorld gw, float scaleX, float scaleY, float offsetX, float offsetY) {
+    public TouchConsumer(GameWorld gw) {
         this.gw = gw;
-
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
     }
 
     public void consumeTouchEvent(Input.TouchEvent event)
@@ -69,28 +61,44 @@ public class TouchConsumer {
         // if we are already dragging with another finger, discard this event
         if (mouseJoint != null) return;
 
-        float x = offsetX + event.x * scaleX,
-              y = offsetY + event.y * scaleY;
+        float x = gw.toMetersX(event.x), y = gw.toMetersY(event.y);
+
         Log.d("MultiTouchHandler", "touch down at " + x + ", " + y);
 
         touchedFixture = null;
         gw.world.queryAABB(touchQueryCallback, x - POINTER_SIZE, y - POINTER_SIZE, x + POINTER_SIZE, y + POINTER_SIZE);
         if (touchedFixture != null) {
-            MouseJointDef mouseJointDef = new MouseJointDef();
+            // From fixture to GO
             Body touchedBody = touchedFixture.getBody();
             Object userData = touchedBody.getUserData();
             if (userData != null) {
-                // Set up a mouse joint between the touched GameObject and the touch coordinates (x,y)
                 GameObject touchedGO = (GameObject) userData;
-                Log.d("MultiTouchHandler", "touched body " + touchedGO.name);
-                mouseJointDef.setBodyA(touchedBody); // irrelevant but necessary
-                mouseJointDef.setBodyB(touchedBody);
-                mouseJointDef.setMaxForce(500 * touchedBody.getMass());
-                mouseJointDef.setTarget(x, y);
-                mouseJoint = gw.world.createMouseJoint(mouseJointDef);
                 activePointerID = pointerId;
+                Log.d("MultiTouchHandler", "touched game object " + touchedGO.name);
+                setupMouseJoint(x, y, touchedBody);
+                // splitBox(touchedGO, touchedBody);
             }
         }
+    }
+
+    // If a DynamicBox is touched, it splits into two
+    private void splitBox(GameObject touchedGO, Body touchedBody) {
+        if (touchedGO instanceof DynamicBoxGO) {
+            gw.world.destroyBody(touchedBody);
+            gw.objects.remove(touchedGO);
+            gw.addGameObject(new DynamicBoxGO(gw, touchedBody.getPositionX(), touchedBody.getPositionY()));
+            gw.addGameObject(new DynamicBoxGO(gw, touchedBody.getPositionX(), touchedBody.getPositionY()));
+        }
+    }
+
+    // Set up a mouse joint between the touched GameObject and the touch coordinates (x,y)
+    private void setupMouseJoint(float x, float y, Body touchedBody) {
+        MouseJointDef mouseJointDef = new MouseJointDef();
+        mouseJointDef.setBodyA(touchedBody); // irrelevant but necessary
+        mouseJointDef.setBodyB(touchedBody);
+        mouseJointDef.setMaxForce(500 * touchedBody.getMass());
+        mouseJointDef.setTarget(x, y);
+        mouseJoint = gw.world.createMouseJoint(mouseJointDef);
     }
 
     private void consumeTouchUp(Input.TouchEvent event) {
@@ -103,9 +111,8 @@ public class TouchConsumer {
     }
 
     private void consumeTouchMove(Input.TouchEvent event) {
+        float x = gw.toMetersX(event.x), y = gw.toMetersY(event.y);
         if (mouseJoint!=null && event.pointer == activePointerID) {
-            float x = offsetX + event.x * scaleX,
-                  y = offsetY + event.y * scaleY;
             Log.d("MultiTouchHandler", "active pointer moved to " + x + ", " + y);
             mouseJoint.setTarget(x, y);
         }

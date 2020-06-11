@@ -9,8 +9,10 @@ import android.util.Log;
 import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.FixtureDef;
+import com.google.fpl.liquidfun.ParticleFlag;
 import com.google.fpl.liquidfun.ParticleGroup;
 import com.google.fpl.liquidfun.ParticleGroupDef;
+import com.google.fpl.liquidfun.ParticleGroupFlag;
 import com.google.fpl.liquidfun.ParticleSystem;
 import com.google.fpl.liquidfun.PolygonShape;
 
@@ -58,6 +60,9 @@ public class MarblesGO extends GameObject
         ParticleGroupDef groupDef = new ParticleGroupDef();
         groupDef.setShape(box);
         groupDef.setPosition(x, y);
+        // NEW:
+        groupDef.setGroupFlags(ParticleGroupFlag.solidParticleGroup);
+        groupDef.setFlags(ParticleFlag.elasticParticle);
         group = gw.particleSystem.createParticleGroup(groupDef);
         this.particleCount = group.getParticleCount();
 

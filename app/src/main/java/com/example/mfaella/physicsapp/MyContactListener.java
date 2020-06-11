@@ -24,6 +24,9 @@ public class MyContactListener extends ContactListener {
         return result;
     }
 
+    /** Warning: this method runs inside world.step
+     *  Hence, it cannot change the physical world.
+     */
     @Override
     public void beginContact(Contact contact) {
         //Log.d("MyContactListener", "Begin contact");
