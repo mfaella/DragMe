@@ -59,9 +59,10 @@ public class MainActivity extends Activity {
             screenSize   = new Box(0, 0, metrics.widthPixels, metrics.heightPixels);
         GameWorld gw = new GameWorld(physicalSize, screenSize, this);
 
+        gw.addGameObject(new EnclosureGO(gw, XMIN, XMAX, YMIN, YMAX));
         gw.addGameObject(new DynamicBoxGO(gw, 0, 0));
         gw.addGameObject(new DynamicBoxGO(gw, 5, 0));
-        gw.addGameObject(new EnclosureGO(gw, XMIN, XMAX, YMIN, YMAX));
+        gw.addGameObject(new DynamicTriangleGO(gw, 7, 3));
         gw.addGameObject(new MarblesGO(gw, 0, 5));
 
         GameObject a = gw.addGameObject(new DynamicBoxGO(gw, 0, -2));

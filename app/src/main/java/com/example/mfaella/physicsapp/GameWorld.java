@@ -86,7 +86,8 @@ public class GameWorld {
 
     public synchronized GameObject addGameObject(GameObject obj)
     {
-        objects.add(obj); return obj;
+        objects.add(obj);
+        return obj;
     }
 
     public synchronized void addParticleGroup(GameObject obj)

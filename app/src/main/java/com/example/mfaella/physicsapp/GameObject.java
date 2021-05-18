@@ -44,4 +44,9 @@ public abstract class GameObject {
     }
 
     public abstract void draw(Bitmap buf, float x, float y, float angle);
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
