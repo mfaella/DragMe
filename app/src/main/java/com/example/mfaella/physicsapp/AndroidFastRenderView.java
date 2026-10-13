@@ -44,13 +44,14 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
         }
     }
 
+    // Executed by an additional thread
     public void run() {
         Rect dstRect = new Rect();
         long startTime = System.nanoTime(), fpsTime = startTime, frameCounter = 0;
 
         /*** The Game Main Loop ***/
         while (running) {
-            if(!holder.getSurface().isValid()) {
+            if(!holder.getSurface().isValid()) { // polling
                 // too soon (busy waiting), this only happens on startup and resume
                 continue;
             }
