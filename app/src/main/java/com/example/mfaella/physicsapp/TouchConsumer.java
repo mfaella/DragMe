@@ -27,8 +27,9 @@ public class TouchConsumer {
 
     private class TouchQueryCallback extends QueryCallback
     {
+        @Override
         public boolean reportFixture(Fixture fixture) {
-            touchedFixture = fixture;
+            touchedFixture = fixture; // Warning: only one fixture is reported
             return true;
         }
     }
