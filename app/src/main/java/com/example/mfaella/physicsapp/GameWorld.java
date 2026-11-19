@@ -116,8 +116,7 @@ public class GameWorld {
         // clear the screen (with black)
         canvas.drawARGB(255, 0, 0, 0);
         for (GameObject obj: objects)
-            obj.draw(buffer);
-        // drawParticles();
+            obj.draw(canvas);
     }
 
     private void handleCollisions(Collection<Collision> collisions) {

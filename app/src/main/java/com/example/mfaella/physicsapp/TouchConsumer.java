@@ -100,6 +100,7 @@ public class TouchConsumer {
         mouseJointDef.setMaxForce(500 * touchedBody.getMass());
         mouseJointDef.setTarget(x, y);
         mouseJoint = gw.world.createMouseJoint(mouseJointDef);
+        mouseJointDef.delete();
     }
 
     private void consumeTouchUp(Input.TouchEvent event) {

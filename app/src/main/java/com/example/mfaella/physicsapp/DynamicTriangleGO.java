@@ -15,8 +15,6 @@ public class DynamicTriangleGO extends GameObject {
     private static final float semi_width = 2f, density = 0.5f;
     private static float screen_semi_width;
     private static int instances = 0;
-
-    private final Canvas canvas;
     private final Paint paint = new Paint();
 
     public DynamicTriangleGO(GameWorld gw, float x, float y)
@@ -25,7 +23,6 @@ public class DynamicTriangleGO extends GameObject {
 
         instances++;
 
-        this.canvas = new Canvas(gw.buffer); // Is this needed?
         this.screen_semi_width = gw.toPixelsXLength(semi_width);
 
         // a body definition: position and type
@@ -61,7 +58,7 @@ public class DynamicTriangleGO extends GameObject {
     private Path path = new Path();
 
     @Override
-    public void draw(Bitmap buffer, float x, float y, float angle) {
+    public void draw(Canvas canvas, float x, float y, float angle) {
         canvas.save();
         canvas.rotate((float) Math.toDegrees(angle), x, y);
         path.reset();

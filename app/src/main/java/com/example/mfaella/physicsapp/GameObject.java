@@ -1,6 +1,7 @@
 package com.example.mfaella.physicsapp;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.Log;
 
 import com.google.fpl.liquidfun.Body;
@@ -18,7 +19,7 @@ public abstract class GameObject {
         this.gw = gw;
     }
 
-    public boolean draw(Bitmap buffer)
+    public boolean draw(Canvas canvas)
     {
         if (body!=null) {
             // Physical position of the center
@@ -33,17 +34,17 @@ public abstract class GameObject {
                 // Screen position
                 float screen_x = gw.toPixelsX(x),
                       screen_y = gw.toPixelsY(y);
-                this.draw(buffer, screen_x, screen_y, angle);
+                this.draw(canvas, screen_x, screen_y, angle);
                 return true;
             } else
                 return false;
         } else {
-            this.draw(buffer, 0, 0, 0);
+            this.draw(canvas, 0, 0, 0);
             return true;
         }
     }
 
-    public abstract void draw(Bitmap buf, float x, float y, float angle);
+    public abstract void draw(Canvas c, float x, float y, float angle);
 
     @Override
     public String toString() {

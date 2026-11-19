@@ -36,7 +36,6 @@ public class MarblesGO extends GameObject
     private ByteBuffer particlePositionsBuffer;
     private int particleCount;
 
-    private final Canvas canvas;
     private final Paint paint = new Paint();
     private final ParticleSystem psys;
     private final ParticleGroup group;
@@ -49,7 +48,6 @@ public class MarblesGO extends GameObject
     {
         super(gw);
 
-        this.canvas = new Canvas(gw.buffer);
         this.psys = gw.particleSystem;
 
         paint.setARGB(255, 0, 255, 0);
@@ -80,7 +78,7 @@ public class MarblesGO extends GameObject
     }
 
     @Override
-    public void draw(Bitmap buffer, float _x, float _y, float _angle) {
+    public void draw(Canvas canvas, float _x, float _y, float _angle) {
         /* The SLOW way to draw particles, one at a time.
 
         for (int i=0; i<particleCount; i++) {

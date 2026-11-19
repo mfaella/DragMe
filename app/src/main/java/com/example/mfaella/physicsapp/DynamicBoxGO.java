@@ -29,7 +29,6 @@ public class DynamicBoxGO extends GameObject
     private static float screen_semi_width, screen_semi_height;
     private static int instances = 0;
 
-    private final Canvas canvas;
     private final Paint paint = new Paint();
 
     public DynamicBoxGO(GameWorld gw, float x, float y)
@@ -38,7 +37,6 @@ public class DynamicBoxGO extends GameObject
 
         instances++;
 
-        this.canvas = new Canvas(gw.buffer); // Is this needed?
         this.screen_semi_width = gw.toPixelsXLength(width)/2;
         this.screen_semi_height = gw.toPixelsYLength(height)/2;
 
@@ -88,7 +86,7 @@ public class DynamicBoxGO extends GameObject
     private Bitmap bitmap;
 
     @Override
-    public void draw(Bitmap buffer, float x, float y, float angle) {
+    public void draw(Canvas canvas, float x, float y, float angle) {
         canvas.save();
         canvas.rotate((float) Math.toDegrees(angle), x, y);
         dest.left = x - screen_semi_width;

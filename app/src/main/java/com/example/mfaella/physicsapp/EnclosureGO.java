@@ -58,11 +58,10 @@ public class EnclosureGO extends GameObject
     }
 
     @Override
-    public void draw(Bitmap buffer, float x, float y, float angle) {
+    public void draw(Canvas canvas, float x, float y, float angle) {
         paint.setARGB(255, 0, 0, 255);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(2);
-        Canvas canvas = new Canvas(buffer);
         canvas.drawRect(screen_xmin, screen_ymin, screen_xmax, screen_ymax, paint);
     }
 }
